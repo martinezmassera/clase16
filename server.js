@@ -14,9 +14,7 @@ const server = http.createServer(app);
 const io = new Server(server);
 
 app.use(express.static('public'))
-
-const products = []
-const messages =[]
+const PORT = process.env.PORT || 8080
 
 app.get('/', (req, res) => {
     
@@ -54,6 +52,6 @@ io.on('connection', socket => {
 // FIN CHAT
 
 })
-server.listen(8080, () => {
+server.listen(PORT, () => {
     console.log('Running...')
 })
