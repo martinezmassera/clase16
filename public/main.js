@@ -2,7 +2,7 @@ const socket = io()
 
 const btn = document.getElementById('load')
 const chatInit = document.getElementById('chatInit')
-const mail = ''
+
 
 btn.onclick = e => {
     e.preventDefault()
@@ -42,7 +42,16 @@ socket.on('show', data => {
 // --           ----------------          CHAT          ----------------           --
 // --                                                                              --
 // ----------------------------------------------------------------------------------
-// let val = ''
+let mail = localStorage.getItem('mail');
+if (mail == null){
+    mail = prompt('mail');
+    localStorage.setItem('mail', mail)
+}
+
+if (mail){
+    document.getElementById('mail').innerHTML = mail
+}
+
 // function chat() {
 //     var x = document.getElementById("chat");
 //     var bt = document.getElementById("chatInit");
@@ -71,7 +80,7 @@ const addMessage = () => {
         text: document.getElementById('text').value,
     };
     console.log(message)
-    socket.emit('new-message', message);
+    socket.emit('new-message', {message, mail});
     return false
 }
 
