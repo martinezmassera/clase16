@@ -1,7 +1,8 @@
 const express = require('express')
 const http = require('http');
 const { Server } = require("socket.io");
-
+const Contenedor = require('./contenedor')
+const prod = new Contenedor('./chat.json')
 const app = express()
 
 app.set('views', './views')
@@ -18,6 +19,7 @@ const products = []
 const messages =[]
 
 app.get('/', (req, res) => {
+    
     res.render('index')
 })
 
@@ -45,9 +47,9 @@ io.on('connection', socket => {
  socket.on('new-message', (newMessage) => {
     newMessage.time = new Date().toLocaleString();
     messages.push(newMessage);
-    console.log(messages)
-    console.log(newMessage)
-    io.sockets.emit('messages',[newMessage]);
+    prod.addItem(newMessage)
+    const leer = prod.leer()
+    io.sockets.emit('messages', leer);
 });
 // FIN CHAT
 

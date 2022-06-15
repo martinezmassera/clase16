@@ -24,7 +24,7 @@ btn.onclick = e => {
     return false
 }
 
-socket.on('show', data => {
+socket.on('show', () => {
     fetch('/products')
         .then(r => r.text())
         .then(html => {
@@ -42,58 +42,60 @@ socket.on('show', data => {
 // --           ----------------          CHAT          ----------------           --
 // --                                                                              --
 // ----------------------------------------------------------------------------------
-let mail = localStorage.getItem('mail');
-if (mail == null){
-    mail = prompt('mail');
-    localStorage.setItem('mail', mail)
-}
 
-if (mail){
+let mail = localStorage.getItem('mail');
+
+if (mail) {
     document.getElementById('mail').innerHTML = mail
 }
 
-// function chat() {
-//     var x = document.getElementById("chat");
-//     var bt = document.getElementById("chatInit");
-//     if (x.style.display === "none") {
-//         bt.style.display = "none";
-//         val = prompt('Ingresar Mail');
-//         x.style.display = "block";
-//     } else {
-//         x.style.display = "none";
-//     }
-// }
+function chat() {
+    var x = document.getElementById("chat");
+    var bt = document.getElementById("chatInit");
+    if (x.style.display === "none") {
+        bt.style.display = "none";
+        x.style.display = "block";
+        if (mail == null) {
+            mail = prompt('mail');
+            ValidaCorreo(mail)
+            localStorage.setItem('mail', mail)
+        }
+    } else {
+        x.style.display = "none";
+    }
+}
+
 socket.on('messages', (chat) => {
-    render(chat)
+    const chatWeb = chat.map(element => {
+        return (`<div><strong class="author">${element.author}</strong> <span class="Hora">[${element.time}]: <em class="texto">${element.text}</em></div>`)
+    }).join(' ');
+
+    document.getElementById('messages').innerHTML = chatWeb
 });
 
-const render = (chat) => {
-    chat.forEach(element => {
-        $('#messages').append(`<div>
-        <strong class="author">${element.author}</strong> <span class="Hora">[${element.time}]: <em class="texto">${element.text}</em></div>`)
-    });
-}
+
 
 const addMessage = () => {
     const message = {
-        author: document.getElementById('author').value,
-        text: document.getElementById('text').value,
+        author: mail,
+        text: document.getElementById('text').value
     };
     console.log(message)
-    socket.emit('new-message', {message, mail});
+    socket.emit('new-message', message);
     return false
 }
 
 const elementochat = document.getElementById('formchat')
 elementochat.addEventListener('submit', (event) => {
     event.preventDefault();
-    ValidaCorreo(document.getElementById('author').value)
+    addMessage()
+    
 })
 
 function ValidaCorreo(valor) {
     re = /^([\da-z_\.-]+)@([\da-z\.-]+)\.([a-z\.]{2,6})$/
     if (!re.exec(valor)) {
         alert('email no valido');
+        mail = prompt('mail');
     }
-    else addMessage();
 }
