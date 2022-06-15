@@ -9,12 +9,14 @@ app.set('views', './views')
 app.set('view engine', 'ejs')
 app.use(express.json())
 app.use(express.urlencoded({extended: true}))
-
+const PORT = process.env.PORT || 8080
 const server = http.createServer(app);
 const io = new Server(server);
 
 app.use(express.static('public'))
-const PORT = process.env.PORT || 8080
+
+const products = []
+
 
 app.get('/', (req, res) => {
     
@@ -44,7 +46,6 @@ io.on('connection', socket => {
  // INICIO CHAT
  socket.on('new-message', (newMessage) => {
     newMessage.time = new Date().toLocaleString();
-    messages.push(newMessage);
     prod.addItem(newMessage)
     const leer = prod.leer()
     io.sockets.emit('messages', leer);
