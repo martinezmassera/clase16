@@ -66,10 +66,10 @@ function chat() {
 }
 
 socket.on('messages', (chat) => {
+console.log(chat)
     const chatWeb = chat.map(element => {
         return (`<div><strong class="author">${element.author}</strong> <span class="Hora">[${element.time}]: <em class="texto">${element.text}</em></div>`)
     }).join(' ');
-
     document.getElementById('messages').innerHTML = chatWeb
 });
 
