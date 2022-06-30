@@ -40,7 +40,6 @@ io.on('connection', socket => {
     // INICIO PRODUCTOS
     socket.on('add', async(data) => {
         await contProd.addItem(data)
-        
         io.sockets.emit('show', `new data`)
     })
     // // FIN PRODUCTOS
